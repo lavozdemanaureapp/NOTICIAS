@@ -3,39 +3,45 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MANAURE 92.3 FM - MONITOR FINAL</title>
+    <title>MONITOR MANAURE v11.0 - CONTENIDO FILTRADO</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
-        .noticia-titulo { font-family: 'Arial Black', sans-serif; text-transform: uppercase; }
-        .noticia-resumen { font-family: 'Georgia', serif; text-transform: none; font-style: italic; color: #94a3b8; }
+        .noticia-titulo { font-family: 'Arial Black', sans-serif; text-transform: uppercase; line-height: 1.2; }
+        .noticia-resumen { font-family: 'Georgia', serif; text-transform: none; font-style: italic; color: #cbd5e1; }
+        .seccion-card { border-left: 8px solid; }
     </style>
 </head>
-<body class="bg-black text-white min-h-screen p-4 uppercase">
+<body class="bg-black text-white min-h-screen p-4 uppercase font-sans">
     
     <div class="max-w-6xl mx-auto">
-        <header class="mb-8 text-center border-b-4 border-red-700 pb-4">
-            <h1 class="text-5xl font-black italic italic tracking-tighter">RADIO MANAURE</h1>
-            <p class="text-red-500 font-bold text-[10px] tracking-[0.4em] mt-1">SISTEMA DE NOTICIAS ESTABLE v9.0</p>
+        <header class="mb-10 text-center border-b-4 border-red-700 pb-6 shadow-2xl">
+            <h1 class="text-6xl font-black italic tracking-tighter">RADIO MANAURE</h1>
+            <p class="text-red-600 font-bold text-xs tracking-[0.5em] mt-2 italic">Monitor Informativo Institucional 92.3 FM</p>
         </header>
 
-        <div id="status" class="text-center py-10 animate-pulse font-black text-yellow-500">CONECTANDO CON SATÉLITES...</div>
+        <div id="status" class="text-center py-10 animate-pulse font-black text-yellow-500 italic tracking-widest">
+            SINCROIZANDO PAUTA POSITIVA Y NOTICIAS DEL DÍA...
+        </div>
 
-        <div id="contenedor-principal" class="hidden space-y-12">
-            <div id="mundo"></div>
+        <div id="contenedor-principal" class="hidden space-y-12 pb-20">
             <div id="venezuela"></div>
             <div id="tachira"></div>
             <div id="deportes"></div>
+            <div id="mundo"></div>
             <div id="sucesos"></div>
         </div>
     </div>
 
     <script>
+        // Filtros aplicados para priorizar noticias institucionales y evitar temas de conflicto
+        const filtroNegativo = "-crisis -protestas -conflictos -oposicion -escasez -inflacion";
+        
         const config = {
-            mundo: { t: "🌍 MUNDO", q: "Internacionales site:ultimasnoticias.com.ve OR site:2001online.com" },
-            venezuela: { t: "🇻🇪 VENEZUELA", q: "Venezuela site:lanacionweb.com OR site:eluniversal.com" },
-            tachira: { t: "🏟️ TÁCHIRA", q: "Táchira site:lanacionweb.com OR site:laprensatachira.com" },
-            deportes: { t: "⚽ DEPORTES", q: "Deportes site:liderendeportes.com OR site:meridiano.net" },
-            sucesos: { t: "🚨 SUCESOS", q: "Sucesos site:laprensatachira.com OR site:lanacionweb.com" }
+            venezuela: { t: "🇻🇪 NACIONALES", c: "text-yellow-500", b: "border-yellow-600", q: `Venezuela (site:ultimasnoticias.com.ve OR site:vtv.gob.ve OR site:radiomundial.com.ve) ${filtroNegativo}` },
+            tachira: { t: "🏟️ REGIONALES (TÁCHIRA)", c: "text-blue-400", b: "border-blue-500", q: `Táchira (site:lanacionweb.com OR site:laprensatachira.com) -deporte -fútbol ${filtroNegativo}` },
+            deportes: { t: "⚽ DEPORTES", c: "text-green-500", b: "border-green-600", q: "Deportes site:liderendeportes.com OR site:meridiano.net" },
+            mundo: { t: "🌍 INTERNACIONALES", c: "text-blue-600", b: "border-blue-700", q: `Mundo site:ultimasnoticias.com.ve OR site:2001online.com ${filtroNegativo}` },
+            sucesos: { t: "🚨 SUCESOS", c: "text-red-600", b: "border-red-700", q: "Sucesos (site:laprensatachira.com OR site:lanacionweb.com)" }
         };
 
         async function cargarTodo() {
@@ -47,35 +53,47 @@
                     const res = await fetch(url);
                     const data = await res.json();
                     
-                    let html = `<h2 class="text-2xl font-black border-l-8 border-red-700 pl-4 mb-6 text-red-600">${config[id].t}</h2>`;
-                    html += `<div class="grid grid-cols-1 md:grid-cols-2 gap-4">`;
+                    let html = `<h2 class="text-3xl font-black mb-6 italic ${config[id].c}">${config[id].t}</h2>`;
+                    html += `<div class="grid grid-cols-1 md:grid-cols-2 gap-6">`;
 
                     data.items.slice(0, 10).forEach(item => {
                         const fuente = item.author || "PRENSA";
-                        const titulo = item.title.split(" - ")[0].toUpperCase();
-                        let resumen = item.description.replace(/<[^>]*>?/gm, '').substring(0, 150) + "...";
+                        const titulo = item.title.replace(/ - .*/, "").toUpperCase();
+                        const fecha = new Date(item.pubDate).toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'});
+                        
+                        let tmp = document.createElement("DIV");
+                        tmp.innerHTML = item.description;
+                        let resumen = tmp.innerText.replace(/&nbsp;/g, ' ').substring(0, 180) + "...";
 
                         html += `
-                            <div class="bg-slate-900 p-5 rounded-2xl border border-slate-800 shadow-lg">
-                                <div class="flex justify-between text-[9px] font-black mb-2">
-                                    <span class="text-red-500">${fuente}</span>
-                                    <span class="text-slate-500">${new Date(item.pubDate).toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'})}</span>
+                            <div class="bg-slate-900 p-6 rounded-3xl seccion-card ${config[id].b} shadow-2xl flex flex-col justify-between">
+                                <div>
+                                    <div class="flex justify-between text-[10px] font-black mb-4 tracking-widest">
+                                        <span class="${config[id].c}">${fuente}</span>
+                                        <span class="text-slate-500 italic">${fecha}</span>
+                                    </div>
+                                    <h3 class="noticia-titulo text-base mb-3 text-white">${titulo}</h3>
+                                    <p class="noticia-resumen text-[11px] leading-relaxed mb-6">${resumen}</p>
                                 </div>
-                                <h3 class="noticia-titulo text-sm mb-2 leading-tight">${titulo}</h3>
-                                <p class="noticia-resumen text-[11px] mb-4">${resumen}</p>
-                                <button onclick="navigator.clipboard.writeText('${titulo} [${fuente}]'); alert('COPIADO');" class="w-full bg-slate-800 py-3 rounded-xl text-[10px] font-black hover:bg-white hover:text-black transition-all">COPIAR TITULAR</button>
+                                <button onclick="copiar('${titulo} [${fuente}]')" class="w-full bg-slate-800 py-4 rounded-2xl text-[11px] font-black hover:bg-white hover:text-black transition-all border border-slate-700 uppercase">COPIAR TITULAR</button>
                             </div>
                         `;
                     });
 
                     html += `</div>`;
                     document.getElementById(id).innerHTML = html;
+                    await new Promise(r => setTimeout(r, 400)); 
                 } catch (e) {
-                    document.getElementById(id).innerHTML = `<p class="text-red-900 text-xs italic">Error en sección ${id}</p>`;
+                    document.getElementById(id).innerHTML = `<p class="text-red-900 text-xs italic">Error de actualización en ${id}</p>`;
                 }
             }
             document.getElementById('status').classList.add('hidden');
             document.getElementById('contenedor-principal').classList.remove('hidden');
+        }
+
+        function copiar(texto) {
+            navigator.clipboard.writeText(texto);
+            alert("TITULAR COPIADO");
         }
 
         window.onload = cargarTodo;
