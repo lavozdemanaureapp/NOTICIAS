@@ -3,12 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MONITOR MANAURE v15.0 - FUENTES DIRECTAS</title>
+    <title>MONITOR MANAURE v16.0 - TIEMPO REAL</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         .noticia-titulo { font-family: 'Arial Black', sans-serif; text-transform: uppercase; line-height: 1.2; }
         .noticia-resumen { font-family: 'Georgia', serif; text-transform: none; font-style: italic; color: #cbd5e1; }
-        .seccion-card { border-left: 8px solid; transition: all 0.2s ease; }
+        .seccion-card { border-left: 8px solid; transition: all 0.2s ease; border-top: 1px solid #1e293b; }
         .seccion-card:hover { transform: translateY(-4px); background-color: #111827; }
     </style>
 </head>
@@ -16,15 +16,15 @@
     
     <div class="max-w-7xl mx-auto">
         <header class="mb-10 text-center border-b-4 border-red-700 pb-6 shadow-2xl">
-            <h1 class="text-6xl font-black italic tracking-tighter">RADIO MANAURE</h1>
+            <h1 class="text-6xl font-black italic tracking-tighter text-white">RADIO MANAURE</h1>
             <div class="flex justify-center items-center gap-4 mt-2">
-                <p class="text-red-600 font-bold tracking-[0.5em] italic">92.3 FM - MONITOR DEPORTIVO ESPECIALIZADO</p>
-                <span id="reloj-viva" class="bg-slate-900 px-3 py-1 rounded-full text-green-500 font-mono text-[10px] border border-green-900">ACTUALIZADO</span>
+                <p class="text-red-600 font-bold tracking-[0.5em] italic">92.3 FM - NOTICIAS DE LAS ÚLTIMAS 24H</p>
+                <span id="reloj-viva" class="bg-slate-900 px-3 py-1 rounded-full text-green-500 font-mono text-[10px] border border-green-900">AL DÍA</span>
             </div>
         </header>
 
         <div id="status" class="text-center py-10 animate-pulse font-black text-yellow-500 italic uppercase">
-            CONECTANDO CON LÍDER, MERIDIANO Y DEPORTIVO TÁCHIRA...
+            FILTRANDO NOTICIAS DE HOY...
         </div>
 
         <div id="contenedor-principal" class="hidden space-y-12 pb-20">
@@ -32,9 +32,7 @@
             <div id="beisbol"></div>
             <div id="baloncesto"></div>
             <div id="otros-deportes"></div>
-            
             <hr class="border-slate-800 my-10">
-            
             <div id="venezuela"></div>
             <div id="tachira"></div>
             <div id="mundo"></div>
@@ -45,27 +43,27 @@
     <script>
         const filtroNegativo = "-crisis -protestas -conflictos -oposicion -escasez -inflacion";
         
+        // CONFIGURACIÓN CON FILTROS DE TIEMPO Y PALABRAS CLAVE
         const config = {
-            // DEPORTES CON TUS LINKS ESPECÍFICOS
-            futbol: { t: "⚽ FÚTBOL (DT / LÍDER / MERIDIANO)", c: "text-green-400", b: "border-green-500", q: "site:deportivotachira.com OR site:liderendeportes.com/seccion/futbol/ OR site:meridiano.net/futbol OR site:lanacionweb.com/deportes/" },
-            beisbol: { t: "⚾ BÉISBOL (LÍDER / MERIDIANO)", c: "text-blue-300", b: "border-blue-400", q: "site:liderendeportes.com/seccion/baseball/ OR site:meridiano.net/beisbol" },
-            baloncesto: { t: "🏀 BALONCESTO (LÍDER / MERIDIANO)", c: "text-orange-500", b: "border-orange-600", q: "site:liderendeportes.com/seccion/basketball/ OR site:meridiano.net/baloncesto" },
-            "otros-deportes": { t: "🚴 MÁS DEPORTES / CICLISMO", c: "text-purple-400", b: "border-purple-500", q: "site:liderendeportes.com/seccion/mas-deportes/ OR site:lanacionweb.com/deportes/" },
-            
-            // GENERALES (SIGUEN IGUAL)
+            futbol: { t: "⚽ FÚTBOL (HOY)", c: "text-green-400", b: "border-green-500", q: "Fútbol (site:deportivotachira.com OR site:liderendeportes.com OR site:meridiano.net OR site:lanacionweb.com)" },
+            beisbol: { t: "⚾ BÉISBOL (HOY)", c: "text-blue-300", b: "border-blue-400", q: "Béisbol MLB LVBP (site:liderendeportes.com OR site:meridiano.net)" },
+            baloncesto: { t: "🏀 BALONCESTO (HOY)", c: "text-orange-500", b: "border-orange-600", q: "Baloncesto NBA (site:liderendeportes.com OR site:meridiano.net)" },
+            "otros-deportes": { t: "🚴 OTROS DEPORTES", c: "text-purple-400", b: "border-purple-500", q: "Ciclismo F1 Boxeo (site:lanacionweb.com OR site:liderendeportes.com)" },
             venezuela: { t: "🇻🇪 NACIONALES", c: "text-yellow-500", b: "border-yellow-600", q: `Venezuela (site:ultimasnoticias.com.ve OR site:vtv.gob.ve) ${filtroNegativo}` },
-            tachira: { t: "🏟️ TÁCHIRA (COMUNIDAD)", c: "text-blue-500", b: "border-blue-600", q: `Táchira (site:lanacionweb.com OR site:laprensatachira.com) -deporte ${filtroNegativo}` },
+            tachira: { t: "🏟️ TÁCHIRA (COMUNIDAD)", c: "text-blue-500", b: "border-blue-600", q: `Táchira (site:lanacionweb.com OR site:laprensatachira.com) -deporte -futbol ${filtroNegativo}` },
             mundo: { t: "🌍 MUNDO", c: "text-blue-600", b: "border-blue-700", q: `Mundo site:ultimasnoticias.com.ve OR site:2001online.com ${filtroNegativo}` },
             sucesos: { t: "🚨 SUCESOS", c: "text-red-600", b: "border-red-700", q: "Sucesos (site:laprensatachira.com OR site:lanacionweb.com)" }
         };
 
         async function cargarTodo() {
             const statusRef = document.getElementById('reloj-viva');
-            statusRef.innerText = "BUSCANDO...";
+            statusRef.innerText = "SINCRO...";
 
             for (const id in config) {
                 const query = encodeURIComponent(config[id].q);
-                const url = `https://api.rss2json.com/v1/api.json?rss_url=${encodeURIComponent(`https://news.google.com/rss/search?q=${query}&hl=es-419&gl=VE&ceid=VE:es-419`)}`;
+                // tbs=qdr:d fuerza a que solo busque noticias de las últimas 24 horas
+                const rssUrl = `https://news.google.com/rss/search?q=${query}&hl=es-419&gl=VE&ceid=VE:es-419&tbs=qdr:d`;
+                const url = `https://api.rss2json.com/v1/api.json?rss_url=${encodeURIComponent(rssUrl)}`;
                 
                 try {
                     const res = await fetch(url);
@@ -73,6 +71,10 @@
                     
                     let html = `<h2 class="text-3xl font-black mb-6 italic ${config[id].c}">${config[id].t}</h2>`;
                     html += `<div class="grid grid-cols-1 md:grid-cols-2 gap-6">`;
+
+                    if (data.items.length === 0) {
+                        html += `<p class="text-slate-600 italic p-4">No hay noticias nuevas en las últimas 24h para esta sección.</p>`;
+                    }
 
                     data.items.slice(0, 10).forEach(item => {
                         const fuente = item.author || "PRENSA";
@@ -103,8 +105,10 @@
 
                     html += `</div>`;
                     document.getElementById(id).innerHTML = html;
-                    await new Promise(r => setTimeout(r, 400)); 
-                } catch (e) {}
+                    await new Promise(r => setTimeout(r, 450)); 
+                } catch (e) {
+                    console.log("Error en: " + id);
+                }
             }
             document.getElementById('status').classList.add('hidden');
             document.getElementById('contenedor-principal').classList.remove('hidden');
@@ -113,11 +117,11 @@
 
         function copiar(texto) {
             navigator.clipboard.writeText(texto);
-            alert("TITULAR LISTO");
+            alert("TITULAR COPIADO");
         }
 
         window.onload = cargarTodo;
-        setInterval(cargarTodo, 3600000); // Actualiza cada hora
+        setInterval(cargarTodo, 3600000); 
     </script>
 </body>
 </html>
