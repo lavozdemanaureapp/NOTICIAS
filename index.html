@@ -3,68 +3,86 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MONITOR MANAURE 92.3 FM</title>
+    <title>MASTER NEWS - MANAURE 92.3 FM</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        .btn-section { @apply transition-all duration-300 hover:scale-105 active:scale-95 shadow-lg flex flex-col items-center justify-center p-4 rounded-2xl border-2; }
+    </style>
 </head>
 <body class="bg-slate-950 text-slate-200 min-h-screen p-4 font-sans">
-    <div class="max-w-4xl mx-auto">
-        <header class="mb-8 text-center border-b-2 border-yellow-600 pb-6">
+    <div class="max-w-5xl mx-auto">
+        <header class="mb-8 text-center border-b-2 border-red-600 pb-6">
             <h1 class="text-5xl font-black text-white italic tracking-tighter uppercase">RADIO MANAURE</h1>
-            <p class="text-yellow-500 text-xs font-bold uppercase tracking-[0.4em] mt-2">Central de Búsqueda Directa de Noticias</p>
+            <p class="text-red-500 text-xs font-bold uppercase tracking-[0.4em] mt-2 italic text-shadow">Central de Monitoreo de Prensa en Vivo</p>
         </header>
 
-        <div class="bg-slate-900 p-8 rounded-[2.5rem] shadow-2xl border border-slate-800 mb-8 text-center">
-            <h2 class="text-white font-bold mb-6 uppercase tracking-widest text-sm">¿Qué vamos a informar hoy?</h2>
+        <div class="grid grid-cols-1 gap-8">
             
-            <input type="text" id="pauta" placeholder="Escribe aquí el tema (ej: Frontera, Deporte, Sucesos...)" 
-                   class="w-full p-6 rounded-2xl bg-slate-800 border-2 border-slate-700 text-white text-2xl text-center focus:border-yellow-500 outline-none mb-8 shadow-inner uppercase font-bold">
-            
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <button onclick="abrir('https://ultimasnoticias.com.ve/?s=')" class="bg-slate-800 hover:bg-red-700 p-6 rounded-2xl border border-slate-700 transition-all group flex flex-col items-center">
-                    <span class="text-red-500 font-black text-lg uppercase group-hover:text-white transition-colors">Últimas Noticias</span>
-                    <span class="text-[9px] text-slate-500 group-hover:text-red-200">NACIONAL / MUNDO / SUCESOS</span>
-                </button>
+            <section>
+                <h2 class="text-yellow-500 font-black mb-4 uppercase tracking-widest flex items-center gap-2">
+                    <span class="bg-yellow-500 w-2 h-6 inline-block"></span> Mundo y Venezuela
+                </h2>
+                <div class="grid grid-cols-2 md:grid-cols-3 gap-4">
+                    <a href="https://ultimasnoticias.com.ve/seccion/mas-recientes/" target="_blank" class="btn-section bg-slate-900 border-red-800 hover:bg-red-900">
+                        <span class="text-lg font-black uppercase">Últimas Noticias</span>
+                        <span class="text-[10px] text-slate-400 italic">Lo más reciente</span>
+                    </a>
+                    <a href="https://2001online.com/seccion/nacionales/" target="_blank" class="btn-section bg-slate-900 border-blue-800 hover:bg-blue-900">
+                        <span class="text-lg font-black uppercase">Diario 2001</span>
+                        <span class="text-[10px] text-slate-400 italic">Nacionales</span>
+                    </a>
+                    <a href="https://radiomundial.com.ve/category/venezuela/" target="_blank" class="btn-section bg-slate-900 border-yellow-800 hover:bg-yellow-900">
+                        <span class="text-lg font-black uppercase">YVKE Mundial</span>
+                        <span class="text-[10px] text-slate-400 italic">Patria y Mundo</span>
+                    </a>
+                </div>
+            </section>
 
-                <button onclick="abrir('https://2001online.com/?s=')" class="bg-slate-800 hover:bg-blue-800 p-6 rounded-2xl border border-slate-700 transition-all group flex flex-col items-center">
-                    <span class="text-blue-400 font-black text-lg uppercase group-hover:text-white transition-colors">Diario 2001</span>
-                    <span class="text-[9px] text-slate-500 group-hover:text-blue-200">NACIONAL / INTERNACIONAL</span>
-                </button>
+            <section>
+                <h2 class="text-blue-400 font-black mb-4 uppercase tracking-widest flex items-center gap-2">
+                    <span class="bg-blue-400 w-2 h-6 inline-block"></span> Regional (Táchira)
+                </h2>
+                <div class="grid grid-cols-2 gap-4">
+                    <a href="https://lanacionweb.com/category/regional/" target="_blank" class="btn-section bg-slate-900 border-blue-600 hover:bg-blue-800">
+                        <span class="text-lg font-black uppercase">Diario La Nación</span>
+                        <span class="text-[10px] text-slate-400 italic">Sucesos y Comunidad</span>
+                    </a>
+                    <a href="https://laprensatachira.com/seccion/regionales" target="_blank" class="btn-section bg-slate-900 border-slate-700 hover:bg-slate-800 border-l-blue-500">
+                        <span class="text-lg font-black uppercase">La Prensa Táchira</span>
+                        <span class="text-[10px] text-slate-400 italic">Actualidad Tachirense</span>
+                    </a>
+                </div>
+            </section>
 
-                <button onclick="abrir('https://lanacionweb.com/?s=')" class="bg-slate-800 hover:bg-yellow-700 p-6 rounded-2xl border border-slate-700 transition-all group flex flex-col items-center">
-                    <span class="text-yellow-500 font-black text-lg uppercase group-hover:text-white transition-colors">La Nación</span>
-                    <span class="text-[9px] text-slate-500 group-hover:text-yellow-200">TÁCHIRA / REGIONAL</span>
-                </button>
+            <section>
+                <h2 class="text-red-500 font-black mb-4 uppercase tracking-widest flex items-center gap-2">
+                    <span class="bg-red-500 w-2 h-6 inline-block"></span> Especiales
+                </h2>
+                <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+                    <a href="https://ultimasnoticias.com.ve/seccion/sucesos/" target="_blank" class="btn-section bg-red-950/30 border-red-900 hover:bg-red-900">
+                        <span class="text-red-500 font-black uppercase tracking-tighter">🚨 Sucesos</span>
+                        <span class="text-[9px] text-slate-500 italic">U. Noticias</span>
+                    </a>
+                    <a href="https://laprensatachira.com/seccion/sucesos" target="_blank" class="btn-section bg-red-950/30 border-red-900 hover:bg-red-900 text-center">
+                        <span class="text-red-500 font-black uppercase tracking-tighter">🚨 Sucesos</span>
+                        <span class="text-[9px] text-slate-500 italic">Prensa Táchira</span>
+                    </a>
+                    <a href="https://2001online.com/seccion/deportes/" target="_blank" class="btn-section bg-green-950/20 border-green-900 hover:bg-green-900">
+                        <span class="text-green-500 font-black uppercase tracking-tighter">⚽ Deportes</span>
+                        <span class="text-[9px] text-slate-500 italic">2001</span>
+                    </a>
+                    <a href="https://lanacionweb.com/category/deportes/" target="_blank" class="btn-section bg-green-950/20 border-green-900 hover:bg-green-900 text-center">
+                        <span class="text-green-500 font-black uppercase tracking-tighter">⚽ Deportes</span>
+                        <span class="text-[9px] text-slate-500 italic">La Nación</span>
+                    </a>
+                </div>
+            </section>
 
-                <button onclick="abrir('https://laprensatachira.com/search?q=')" class="bg-slate-800 hover:bg-blue-600 p-6 rounded-2xl border border-slate-700 transition-all group flex flex-col items-center">
-                    <span class="text-blue-300 font-black text-lg uppercase group-hover:text-white transition-colors">La Prensa Táchira</span>
-                    <span class="text-[9px] text-slate-500 group-hover:text-blue-100">TÁCHIRA / SUCESOS</span>
-                </button>
-
-                <button onclick="abrir('https://radiomundial.com.ve/?s=')" class="bg-slate-800 hover:bg-red-600 p-6 rounded-2xl border border-slate-700 transition-all group flex flex-col items-center col-span-1 md:col-span-2">
-                    <span class="text-red-400 font-black text-lg uppercase group-hover:text-white transition-colors tracking-widest">YVKE Mundial</span>
-                    <span class="text-[9px] text-slate-500 group-hover:text-red-100 italic font-bold">NOTICIAS DEL ESTADO Y EL MUNDO</span>
-                </button>
-            </div>
         </div>
 
-        <div class="text-center p-6 bg-yellow-600/10 rounded-2xl border border-yellow-600/20">
-            <p class="text-yellow-600 text-[10px] font-black uppercase tracking-widest leading-relaxed">
-                Instrucciones: Escribe el tema una sola vez y haz clic en el diario. <br>
-                Se abrirá la búsqueda exacta de hoy en ese portal.
-            </p>
-        </div>
+        <footer class="mt-12 text-center text-slate-600 text-[10px] uppercase font-bold border-t border-slate-900 pt-6">
+            Panel de Control Informativo - La Voz de Manaure 2026
+        </footer>
     </div>
-
-    <script>
-        function abrir(urlBase) {
-            const tema = document.getElementById('pauta').value;
-            if (!tema) {
-                alert("¡Epa Alexis! Escribe un tema de búsqueda primero.");
-                return;
-            }
-            // Abre el buscador del diario con el tema ya escrito
-            window.open(urlBase + encodeURIComponent(tema), '_blank');
-        }
-    </script>
 </body>
 </html>
