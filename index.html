@@ -3,38 +3,34 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>BLOG NOTICIAS - MANAURE 92.3</title>
+    <title>MANAURE 92.3 FM - NOTICIAS EN VIVO</title>
     <script src="https://cdn.tailwindcss.com"></script>
 </head>
-<body class="bg-slate-950 text-slate-200 min-h-screen p-4 font-sans">
-    <div class="max-w-6xl mx-auto">
+<body class="bg-black text-slate-100 min-h-screen p-4 font-sans uppercase">
+    <div class="max-w-4xl mx-auto">
         <header class="mb-10 text-center border-b-4 border-red-700 pb-6 shadow-2xl">
-            <h1 class="text-6xl font-black italic tracking-tighter uppercase">RADIO MANAURE</h1>
-            <p class="text-red-600 font-bold text-xs tracking-[0.5em] mt-2">RESUMEN INFORMATIVO DIARIO</p>
+            <h1 class="text-6xl font-black italic tracking-tighter">RADIO MANAURE</h1>
+            <p class="text-red-600 font-bold text-xs tracking-[0.5em] mt-2 italic text-shadow">Resumen de Noticias en Tiempo Real</p>
         </header>
 
-        <div class="grid grid-cols-2 md:grid-cols-5 gap-3 mb-10 text-[10px] font-black uppercase">
-            <button onclick="buscar('Internacionales')" class="bg-slate-900 border border-slate-800 p-4 rounded-2xl hover:bg-blue-700 transition-all">🌍 Mundo</button>
-            <button onclick="buscar('Venezuela')" class="bg-slate-900 border border-slate-800 p-4 rounded-2xl hover:bg-yellow-600 text-yellow-500 hover:text-black transition-all">🇻🇪 Nacional</button>
-            <button onclick="buscar('Táchira')" class="bg-slate-900 border border-slate-800 p-4 rounded-2xl hover:bg-blue-500 text-blue-400 hover:text-black transition-all">🏟️ Táchira</button>
-            <button onclick="buscar('Deportes')" class="bg-slate-900 border border-slate-800 p-4 rounded-2xl hover:bg-green-600 text-green-400 hover:text-black transition-all">⚽ Deportes</button>
-            <button onclick="buscar('Sucesos')" class="bg-slate-900 border border-slate-800 p-4 rounded-2xl hover:bg-red-700 text-red-500 hover:text-white transition-all">🚨 Sucesos</button>
-        </div>
-
-        <div id="blog" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            <div class="col-span-full text-center py-20 opacity-30 italic font-bold uppercase tracking-widest">
-                Selecciona una sección para cargar el resumen...
+        <div id="noticias-blog" class="grid grid-cols-1 gap-6">
+            <div class="text-center py-20 animate-pulse font-black text-yellow-500 text-xl italic tracking-widest">
+                Sincronizando con satélites informativos...
             </div>
         </div>
+
+        <footer class="mt-12 text-center text-slate-800 text-[10px] font-black border-t border-slate-900 pt-6 mb-10">
+            LA VOZ DE MANAURE 92.3 FM - 2026
+        </footer>
     </div>
 
     <script>
-        async function buscar(tema) {
-            const container = document.getElementById('blog');
-            container.innerHTML = `<div class='col-span-full text-center py-20 animate-pulse font-black text-red-600 uppercase'>Sincronizando con los diarios...</div>`;
-
-            // Usamos el motor de Google News para saltar los bloqueos
-            const query = encodeURIComponent(tema + " site:lanacionweb.com OR site:ultimasnoticias.com.ve OR site:2001online.com OR site:laprensatachira.com OR site:liderendeportes.com");
+        // Función que arranca sola al abrir la página
+        window.onload = async function() {
+            const container = document.getElementById('noticias-blog');
+            
+            // Buscamos todo lo importante de Venezuela y el Táchira en un solo viaje
+            const query = encodeURIComponent("Táchira OR Venezuela OR Deportes OR Sucesos site:lanacionweb.com OR site:ultimasnoticias.com.ve OR site:2001online.com OR site:laprensatachira.com OR site:meridiano.net OR site:liderendeportes.com");
             const url = `https://api.allorigins.win/get?url=${encodeURIComponent(`https://news.google.com/rss/search?q=${query}&hl=es-419&gl=VE&ceid=VE:es-419`)}`;
 
             try {
@@ -42,45 +38,45 @@
                 const data = await response.json();
                 const parser = new DOMParser();
                 const xml = parser.parseFromString(data.contents, "text/xml");
-                const items = xml.querySelectorAll("item");
+                const items = Array.from(xml.querySelectorAll("item"));
 
                 container.innerHTML = "";
 
                 items.forEach((item, index) => {
-                    if (index > 14) return; // Máximo 15 noticias
+                    if (index > 25) return; // Mostramos las 25 más frescas
 
                     const titulo = item.querySelector("title").textContent.split(" - ")[0];
                     const link = item.querySelector("link").textContent;
-                    const fuente = item.querySelector("source")?.textContent || "Noticia";
+                    const fuente = item.querySelector("source")?.textContent || "Prensa";
                     const fecha = new Date(item.querySelector("pubDate").textContent).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
 
                     const card = document.createElement('div');
-                    card.className = "bg-slate-900 rounded-[2.5rem] border border-slate-800 p-7 flex flex-col justify-between hover:border-red-600 shadow-2xl transition-all border-l-8 border-l-red-600";
+                    card.className = "bg-slate-900 rounded-3xl border border-slate-800 p-6 flex flex-col md:flex-row justify-between items-center hover:border-red-600 transition-all shadow-xl border-l-8 border-l-red-600 gap-4";
                     
                     card.innerHTML = `
-                        <div>
-                            <div class="flex justify-between items-center mb-4 text-[9px] font-black uppercase tracking-widest text-slate-500">
-                                <span class="bg-slate-800 px-2 py-1 rounded text-red-500 border border-slate-700">${fuente}</span>
-                                <span>${fecha}</span>
+                        <div class="flex-1">
+                            <div class="flex items-center gap-3 mb-2">
+                                <span class="bg-red-700 text-white text-[9px] font-black px-2 py-0.5 rounded shadow-sm italic uppercase">${fuente}</span>
+                                <span class="text-slate-500 font-bold text-[10px] italic underline decoration-red-900">${fecha}</span>
                             </div>
-                            <h3 class="text-lg font-bold text-white leading-tight uppercase italic mb-6 font-serif">${titulo}</h3>
+                            <h3 class="text-lg font-bold text-white leading-tight italic uppercase font-serif tracking-tight">${titulo}</h3>
                         </div>
-                        <div class="pt-4 border-t border-slate-800 flex flex-col gap-3">
-                            <button onclick="copiar('${titulo.replace(/'/g, "")}')" class="bg-red-700 hover:bg-white hover:text-black p-3 rounded-xl text-[10px] font-black uppercase transition-all shadow-lg active:scale-95">Copiar Titular</button>
-                            <a href="${link}" target="_blank" class="text-center text-[9px] text-slate-600 hover:text-white font-bold uppercase transition-colors tracking-tighter">Leer nota original</a>
+                        <div class="flex gap-2 w-full md:w-auto">
+                            <button onclick="copiar('${titulo.replace(/'/g, "").toUpperCase()}')" class="flex-1 md:w-32 bg-slate-800 hover:bg-white hover:text-black py-4 rounded-2xl text-[10px] font-black uppercase transition-all shadow-md active:scale-95 border border-slate-700">Copiar</button>
+                            <a href="${link}" target="_blank" class="flex-1 md:w-32 bg-red-900/20 text-center hover:bg-red-800 py-4 rounded-2xl text-[9px] font-black uppercase text-red-500 hover:text-white transition-all flex items-center justify-center border border-red-900/30">Leer Nota</a>
                         </div>
                     `;
                     container.appendChild(card);
                 });
 
             } catch (e) {
-                container.innerHTML = "<p class='col-span-full text-center text-red-600 font-black p-10 uppercase'>Error al conectar con los diarios. Refresca la página.</p>";
+                container.innerHTML = "<p class='text-center text-red-600 font-black p-10 uppercase italic'>Error de conexión. Refresca para intentar de nuevo.</p>";
             }
-        }
+        };
 
         function copiar(texto) {
-            navigator.clipboard.writeText(texto.toUpperCase());
-            alert("TITULAR COPIADO");
+            navigator.clipboard.writeText(texto);
+            alert("TITULAR LISTO PARA EL MICRO");
         }
     </script>
 </body>
