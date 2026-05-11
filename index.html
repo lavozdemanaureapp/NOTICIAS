@@ -3,109 +3,103 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MANAURE 92.3 FM - NOTICIAS</title>
+    <title>MANAURE 92.3 FM - PAUTA</title>
     <script src="https://cdn.tailwindcss.com"></script>
 </head>
-<body class="bg-slate-950 text-slate-200 min-h-screen p-4">
-    <div class="max-w-6xl mx-auto">
+<body class="bg-slate-950 text-slate-200 min-h-screen p-4 font-sans">
+    <div class="max-w-5xl mx-auto">
         <header class="mb-6 text-center border-b-2 border-yellow-600 pb-4">
-            <h1 class="text-4xl font-black text-white italic tracking-tighter uppercase">RADIO MANAURE <span class="text-yellow-600 text-xl">92.3 FM</span></h1>
-            <p class="text-slate-400 text-[10px] font-bold uppercase tracking-[0.4em]">Monitor de Prensa en Tiempo Real</p>
+            <h1 class="text-4xl font-black text-white italic tracking-tighter uppercase font-serif">LA VOZ DE MANAURE</h1>
+            <p class="text-yellow-500 text-[10px] font-bold uppercase tracking-[0.4em]">Monitor de Prensa Directo v3.0</p>
         </header>
 
         <div class="bg-slate-900 p-6 rounded-3xl shadow-2xl border border-slate-800 mb-8 text-center">
             <div class="flex flex-col md:flex-row gap-3 mb-6">
-                <input type="text" id="topic" placeholder="¿Qué buscamos hoy?" 
-                       class="flex-1 p-4 rounded-xl bg-slate-800 border-2 border-slate-700 text-white font-bold focus:border-yellow-500 outline-none">
-                <button onclick="extract('libre')" class="bg-yellow-600 px-10 py-4 rounded-xl font-black hover:bg-yellow-500 transition-all text-black uppercase italic">
+                <input type="text" id="topic" placeholder="Tema de hoy..." 
+                       class="flex-1 p-4 rounded-xl bg-slate-800 border-2 border-slate-700 text-white font-bold focus:border-yellow-500 outline-none uppercase text-sm">
+                <button onclick="buscar('libre')" class="bg-yellow-600 px-10 py-4 rounded-xl font-black hover:bg-yellow-500 transition-all text-black uppercase italic shadow-lg active:scale-95">
                     BUSCAR
                 </button>
             </div>
             
             <div class="grid grid-cols-2 md:grid-cols-5 gap-2">
-                <button onclick="extract('Mundo')" class="bg-slate-800 hover:bg-blue-600 p-3 rounded-lg text-[10px] font-black uppercase">🌍 MUNDO</button>
-                <button onclick="extract('Venezuela')" class="bg-slate-800 hover:bg-yellow-600 hover:text-black p-3 rounded-lg text-[10px] font-black uppercase text-yellow-500">🇻🇪 VENEZUELA</button>
-                <button onclick="extract('Táchira')" class="bg-slate-800 hover:bg-blue-400 hover:text-black p-3 rounded-lg text-[10px] font-black uppercase text-blue-400">🏟️ REGIONAL</button>
-                <button onclick="extract('Deportes')" class="bg-slate-800 hover:bg-green-600 p-3 rounded-lg text-[10px] font-black uppercase text-green-400">⚽ DEPORTES</button>
-                <button onclick="extract('Sucesos')" class="bg-red-900/40 hover:bg-red-600 p-3 rounded-lg text-[10px] font-black uppercase text-red-500">🚨 SUCESOS</button>
+                <button onclick="buscar('Mundo')" class="bg-slate-800 hover:bg-blue-600 p-3 rounded-lg text-[10px] font-black uppercase border border-slate-700">🌍 MUNDO</button>
+                <button onclick="buscar('Venezuela')" class="bg-slate-800 hover:bg-yellow-600 hover:text-black p-3 rounded-lg text-[10px] font-black uppercase text-yellow-500 border border-slate-700">🇻🇪 VENEZUELA</button>
+                <button onclick="buscar('Táchira')" class="bg-slate-800 hover:bg-blue-400 hover:text-black p-3 rounded-lg text-[10px] font-black uppercase text-blue-400 border border-slate-700">🏟️ TÁCHIRA</button>
+                <button onclick="buscar('Deportes')" class="bg-slate-800 hover:bg-green-600 p-3 rounded-lg text-[10px] font-black uppercase text-green-400 border border-slate-700">⚽ DEPORTES</button>
+                <button onclick="buscar('Sucesos')" class="bg-red-900/40 hover:bg-red-600 p-3 rounded-lg text-[10px] font-black uppercase text-red-500 border border-red-900">🚨 SUCESOS</button>
             </div>
         </div>
 
-        <div id="results" class="grid grid-cols-1 md:grid-cols-3 gap-6 text-sm">
-            <div class="col-span-full text-center py-20 text-slate-600 uppercase font-black italic animate-pulse">
-                Sincronizando con satélites de noticias...
-            </div>
+        <div id="results" class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div class="col-span-full text-center py-20 text-slate-600 uppercase font-black italic tracking-widest">Listo para la pauta...</div>
         </div>
     </div>
 
     <script>
-        async function extract(type) {
+        async function buscar(tipo) {
             const topicInput = document.getElementById('topic').value;
             const resultsDiv = document.getElementById('results');
-            let query = type === 'libre' ? topicInput : type;
+            let query = tipo === 'libre' ? topicInput : tipo;
 
-            if (!query) return alert("Alexis, escribe algo para buscar.");
+            if (!query) return alert("Alexis, escribe un tema.");
 
-            resultsDiv.innerHTML = "<div class='col-span-full text-center py-20 font-black text-yellow-500 animate-bounce uppercase'>Extrayendo titulares de hoy...</div>";
-
-            // Usamos un proxy gratuito de alta disponibilidad para evitar bloqueos
-            const sites = "(site:ultimasnoticias.com.ve OR site:2001online.com OR site:radiomundial.com.ve OR site:lanacionweb.com OR site:laprensatachira.com)";
-            const rssUrl = `https://news.google.com/rss/search?q=${encodeURIComponent(query + ' ' + sites)}&hl=es-419&gl=VE&ceid=VE:es-419`;
-            
-            // Usamos un proxy diferente para mayor estabilidad
-            const proxy = `https://api.allorigins.win/get?url=${encodeURIComponent(rssUrl)}`;
+            resultsDiv.innerHTML = "<div class='col-span-full text-center py-20 font-black text-yellow-500 animate-pulse uppercase tracking-widest'>Sincronizando con Cloudflare...</div>";
 
             try {
-                const response = await fetch(proxy);
-                const data = await response.json();
-                
-                // Parseamos el XML que devuelve Google
+                // LLAMADA DIRECTA A TU WORKER
+                const url = `https://young-snowflake-28b1.lavozdemanaureradio.workers.dev/?q=${encodeURIComponent(query)}`;
+                const response = await fetch(url);
+                const xmlText = await response.text();
+
                 const parser = new DOMParser();
-                const xml = parser.parseFromString(data.contents, "text/xml");
+                const xml = parser.parseFromString(xmlText, "text/xml");
                 const items = xml.querySelectorAll("item");
 
                 if (items.length === 0) {
-                    resultsDiv.innerHTML = "<p class='col-span-full text-center text-red-500 font-bold'>No hay noticias frescas en este momento. Intenta con otro tema.</p>";
+                    resultsDiv.innerHTML = "<p class='col-span-full text-center text-yellow-500 font-bold bg-yellow-900/20 p-6 rounded-xl border border-yellow-900/50 uppercase text-xs tracking-widest'>No hay noticias frescas en este momento para ese tema.</p>";
                     return;
                 }
 
                 resultsDiv.innerHTML = "";
 
                 items.forEach((item, index) => {
-                    if (index > 11) return; // Máximo 12 noticias
+                    if (index > 14) return; 
 
-                    const title = item.querySelector("title").innerHTML;
-                    const link = item.querySelector("link").innerHTML;
-                    const pubDate = new Date(item.querySelector("pubDate").innerHTML).toLocaleTimeString();
-                    const source = item.querySelector("source") ? item.querySelector("source").innerHTML : "Prensa";
+                    let fullTitle = item.querySelector("title").innerHTML;
+                    // Limpiamos el título (quitamos lo que está después del guion, que suele ser el diario)
+                    let cleanTitle = fullTitle.split(" - ")[0];
+                    let link = item.querySelector("link").innerHTML;
+                    let source = item.querySelector("source") ? item.querySelector("source").innerHTML : "Prensa";
+                    let date = new Date(item.querySelector("pubDate").innerHTML).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
 
                     const card = document.createElement('div');
-                    card.className = "bg-slate-900 border border-slate-800 p-5 rounded-3xl flex flex-col justify-between hover:border-yellow-500/50 transition-all";
+                    card.className = "bg-slate-900 border border-slate-800 p-6 rounded-[2rem] flex flex-col justify-between shadow-xl hover:border-yellow-600 transition-all border-l-4 border-l-yellow-600";
                     
                     card.innerHTML = `
                         <div>
-                            <div class="flex justify-between mb-3 text-[9px] font-black uppercase">
-                                <span class="text-yellow-500">${source}</span>
-                                <span class="text-slate-500">${pubDate}</span>
+                            <div class="flex justify-between items-center mb-4 text-[9px] font-black uppercase tracking-widest">
+                                <span class="bg-yellow-600 text-black px-2 py-0.5 rounded">${source}</span>
+                                <span class="text-slate-500 italic">${date}</span>
                             </div>
-                            <h3 class="font-bold text-white leading-tight uppercase italic mb-4">${title}</h3>
+                            <h3 class="font-bold text-base text-white leading-tight uppercase font-serif mb-4 italic">${cleanTitle}</h3>
                         </div>
-                        <div class="mt-4">
-                            <button onclick="copyTo('${title.toUpperCase()}')" class="w-full bg-slate-800 hover:bg-yellow-600 hover:text-black py-3 rounded-xl text-[10px] font-black transition-all uppercase mb-2">Copiar Titular</button>
-                            <a href="${link}" target="_blank" class="block text-center text-[8px] text-slate-600 uppercase font-bold hover:text-white">Ver Nota Original</a>
+                        <div class="mt-4 pt-4 border-t border-slate-800">
+                            <button onclick="copiar('${cleanTitle.toUpperCase()} [${source}]')" class="w-full bg-slate-800 hover:bg-yellow-600 hover:text-black py-3 rounded-xl text-[10px] font-black transition-all uppercase mb-2 shadow-md">Copiar Titular</button>
+                            <a href="${link}" target="_blank" class="block text-center text-[9px] text-slate-500 uppercase font-black hover:text-white transition-colors">Ver nota completa</a>
                         </div>
                     `;
                     resultsDiv.appendChild(card);
                 });
 
             } catch (error) {
-                resultsDiv.innerHTML = "<p class='col-span-full text-center text-red-500 font-black'>ERROR DE CONEXIÓN. REFRESCAR PÁGINA.</p>";
+                resultsDiv.innerHTML = "<div class='col-span-full text-center p-6 bg-red-900/20 border border-red-900 rounded-xl'><p class='text-red-500 font-black uppercase text-xs'>Error de Conexión con Cloudflare. Verifica que el Worker esté activo.</p></div>";
             }
         }
 
-        function copyTo(text) {
+        function copiar(text) {
             navigator.clipboard.writeText(text);
-            alert("TITULAR COPIADO");
+            alert("TITULAR COPIADO PARA RADIO");
         }
     </script>
 </body>
