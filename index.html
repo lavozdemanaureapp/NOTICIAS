@@ -3,54 +3,85 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MONITOR MANAURE 92.3 FM</title>
+    <title>BLOG NOTICIAS - MANAURE 92.3</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <style>
-        .btn-news { @apply bg-slate-900 border-2 border-slate-800 p-5 rounded-3xl flex flex-col items-center justify-center text-center transition-all active:scale-95 hover:bg-slate-800; }
-        .btn-news span { @apply uppercase font-black text-sm tracking-tighter italic; }
-    </style>
 </head>
-<body class="bg-black text-white min-h-screen p-4 font-sans">
-    <div class="max-w-4xl mx-auto">
-        
-        <header class="mb-8 text-center border-b-4 border-red-700 pb-4">
-            <h1 class="text-5xl font-black italic tracking-tighter">MANAURE 92.3</h1>
-            <p class="text-red-600 font-bold text-[10px] uppercase tracking-[0.4em] mt-1">Monitor de Prensa Directo</p>
+<body class="bg-slate-950 text-slate-200 min-h-screen p-4 font-sans">
+    <div class="max-w-6xl mx-auto">
+        <header class="mb-10 text-center border-b-4 border-red-700 pb-6 shadow-2xl">
+            <h1 class="text-6xl font-black italic tracking-tighter uppercase">RADIO MANAURE</h1>
+            <p class="text-red-600 font-bold text-xs tracking-[0.5em] mt-2">RESUMEN INFORMATIVO DIARIO</p>
         </header>
 
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-            
-            <button onclick="window.open('https://ultimasnoticias.com.ve/seccion/mundo/')" class="btn-news border-blue-600">
-                <span class="text-blue-500">🌍 Internacional</span>
-                <p class="text-[9px] text-slate-500 mt-1 italic">Mundo y Global</p>
-            </button>
-
-            <button onclick="window.open('https://2001online.com/nacionales')" class="btn-news border-yellow-500">
-                <span class="text-yellow-500">🇻🇪 Nacional</span>
-                <p class="text-[9px] text-slate-500 mt-1 italic">Política y Economía</p>
-            </button>
-
-            <button onclick="window.open('https://lanacionweb.com/regional/')" class="btn-news border-blue-400">
-                <span class="text-blue-400">🏟️ Regional (Táchira)</span>
-                <p class="text-[9px] text-slate-500 mt-1 italic">Estado y Frontera</p>
-            </button>
-
-            <button onclick="window.open('https://www.liderendeportes.com/')" class="btn-news border-green-600">
-                <span class="text-green-500">⚽ Deportes</span>
-                <p class="text-[9px] text-slate-500 mt-1 italic">Líder y Meridiano</p>
-            </button>
-
-            <button onclick="window.open('https://laprensatachira.com/sucesos')" class="btn-news border-red-600 md:col-span-2">
-                <span class="text-red-600">🚨 Sucesos</span>
-                <p class="text-[9px] text-slate-500 mt-1 italic">Crónica Roja y Locales</p>
-            </button>
-
+        <div class="grid grid-cols-2 md:grid-cols-5 gap-3 mb-10 text-[10px] font-black uppercase">
+            <button onclick="buscar('Internacionales')" class="bg-slate-900 border border-slate-800 p-4 rounded-2xl hover:bg-blue-700 transition-all">🌍 Mundo</button>
+            <button onclick="buscar('Venezuela')" class="bg-slate-900 border border-slate-800 p-4 rounded-2xl hover:bg-yellow-600 text-yellow-500 hover:text-black transition-all">🇻🇪 Nacional</button>
+            <button onclick="buscar('Táchira')" class="bg-slate-900 border border-slate-800 p-4 rounded-2xl hover:bg-blue-500 text-blue-400 hover:text-black transition-all">🏟️ Táchira</button>
+            <button onclick="buscar('Deportes')" class="bg-slate-900 border border-slate-800 p-4 rounded-2xl hover:bg-green-600 text-green-400 hover:text-black transition-all">⚽ Deportes</button>
+            <button onclick="buscar('Sucesos')" class="bg-slate-900 border border-slate-800 p-4 rounded-2xl hover:bg-red-700 text-red-500 hover:text-white transition-all">🚨 Sucesos</button>
         </div>
 
-        <footer class="mt-10 text-center text-slate-800 text-[9px] font-bold uppercase tracking-widest">
-            Acceso Directo Informativo - 2026
-        </footer>
-
+        <div id="blog" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            <div class="col-span-full text-center py-20 opacity-30 italic font-bold uppercase tracking-widest">
+                Selecciona una sección para cargar el resumen...
+            </div>
+        </div>
     </div>
+
+    <script>
+        async function buscar(tema) {
+            const container = document.getElementById('blog');
+            container.innerHTML = `<div class='col-span-full text-center py-20 animate-pulse font-black text-red-600 uppercase'>Sincronizando con los diarios...</div>`;
+
+            // Usamos el motor de Google News para saltar los bloqueos
+            const query = encodeURIComponent(tema + " site:lanacionweb.com OR site:ultimasnoticias.com.ve OR site:2001online.com OR site:laprensatachira.com OR site:liderendeportes.com");
+            const url = `https://api.allorigins.win/get?url=${encodeURIComponent(`https://news.google.com/rss/search?q=${query}&hl=es-419&gl=VE&ceid=VE:es-419`)}`;
+
+            try {
+                const response = await fetch(url);
+                const data = await response.json();
+                const parser = new DOMParser();
+                const xml = parser.parseFromString(data.contents, "text/xml");
+                const items = xml.querySelectorAll("item");
+
+                container.innerHTML = "";
+
+                items.forEach((item, index) => {
+                    if (index > 14) return; // Máximo 15 noticias
+
+                    const titulo = item.querySelector("title").textContent.split(" - ")[0];
+                    const link = item.querySelector("link").textContent;
+                    const fuente = item.querySelector("source")?.textContent || "Noticia";
+                    const fecha = new Date(item.querySelector("pubDate").textContent).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
+
+                    const card = document.createElement('div');
+                    card.className = "bg-slate-900 rounded-[2.5rem] border border-slate-800 p-7 flex flex-col justify-between hover:border-red-600 shadow-2xl transition-all border-l-8 border-l-red-600";
+                    
+                    card.innerHTML = `
+                        <div>
+                            <div class="flex justify-between items-center mb-4 text-[9px] font-black uppercase tracking-widest text-slate-500">
+                                <span class="bg-slate-800 px-2 py-1 rounded text-red-500 border border-slate-700">${fuente}</span>
+                                <span>${fecha}</span>
+                            </div>
+                            <h3 class="text-lg font-bold text-white leading-tight uppercase italic mb-6 font-serif">${titulo}</h3>
+                        </div>
+                        <div class="pt-4 border-t border-slate-800 flex flex-col gap-3">
+                            <button onclick="copiar('${titulo.replace(/'/g, "")}')" class="bg-red-700 hover:bg-white hover:text-black p-3 rounded-xl text-[10px] font-black uppercase transition-all shadow-lg active:scale-95">Copiar Titular</button>
+                            <a href="${link}" target="_blank" class="text-center text-[9px] text-slate-600 hover:text-white font-bold uppercase transition-colors tracking-tighter">Leer nota original</a>
+                        </div>
+                    `;
+                    container.appendChild(card);
+                });
+
+            } catch (e) {
+                container.innerHTML = "<p class='col-span-full text-center text-red-600 font-black p-10 uppercase'>Error al conectar con los diarios. Refresca la página.</p>";
+            }
+        }
+
+        function copiar(texto) {
+            navigator.clipboard.writeText(texto.toUpperCase());
+            alert("TITULAR COPIADO");
+        }
+    </script>
 </body>
 </html>
