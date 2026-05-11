@@ -9,13 +9,13 @@
 <body class="bg-slate-950 text-slate-200 min-h-screen p-4 font-sans">
     <div class="max-w-4xl mx-auto">
         <header class="mb-6 text-center border-b-2 border-red-600 pb-4">
-            <h1 class="text-4xl font-black text-white italic tracking-tighter">LA VOZ DE MANAURE <span class="text-red-500 text-xl not-italic">92.3 FM</span></h1>
-            <p class="text-slate-400 text-xs font-bold uppercase tracking-[0.3em]">Pauta de Noticias y Sucesos en Tiempo Real</p>
+            <h1 class="text-4xl font-black text-white italic tracking-tighter text-shadow-lg">LA VOZ DE MANAURE <span class="text-red-500 text-xl not-italic">92.3 FM</span></h1>
+            <p class="text-slate-400 text-xs font-bold uppercase tracking-[0.3em]">Central de Noticias y Medios Venezolanos</p>
         </header>
 
         <div class="bg-slate-900 p-6 rounded-2xl shadow-2xl border border-slate-800 mb-8">
             <div class="flex flex-col md:flex-row gap-3 mb-4">
-                <input type="text" id="topic" placeholder="Busca un tema (ej: Deportivo Táchira, Frontera...)" 
+                <input type="text" id="topic" placeholder="Busca un tema libre..." 
                        class="flex-1 p-4 rounded-xl bg-slate-800 border border-slate-700 text-white focus:ring-2 focus:ring-red-500 outline-none">
                 <button onclick="fetchNews(document.getElementById('topic').value)" class="bg-red-700 px-8 py-4 rounded-xl font-black hover:bg-red-600 transition-all shadow-lg active:scale-95 text-white">
                     BUSCAR
@@ -23,36 +23,34 @@
             </div>
 
             <div class="grid grid-cols-2 md:grid-cols-4 gap-2">
-                <button onclick="fetchNews('Mundo')" class="bg-slate-800 hover:bg-slate-700 p-3 rounded-lg text-[10px] font-bold border border-slate-700 uppercase">🌍 Mundo</button>
-                <button onclick="fetchNews('Venezuela')" class="bg-slate-800 hover:bg-slate-700 p-3 rounded-lg text-[10px] font-bold border border-slate-700 uppercase text-yellow-500">🇻🇪 Venezuela</button>
-                <button onclick="fetchNews('Táchira')" class="bg-slate-800 hover:bg-slate-700 p-3 rounded-lg text-[10px] font-bold border border-slate-700 uppercase text-blue-400">🏟️ Táchira</button>
-                <button onclick="fetchNews('Sucesos Venezuela')" class="bg-red-900/40 hover:bg-red-900/60 p-3 rounded-lg text-[10px] font-bold border border-red-900 text-red-400 uppercase">🚨 Sucesos</button>
+                <button onclick="fetchNews('Mundo (ultimasnoticias.com.ve OR yvke.com.ve OR 2001online.com)')" class="bg-slate-800 hover:bg-slate-700 p-3 rounded-lg text-[10px] font-bold border border-slate-700 uppercase">🌍 Mundo (Medios VE)</button>
+                <button onclick="fetchNews('Venezuela')" class="bg-slate-800 hover:bg-slate-700 p-3 rounded-lg text-[10px] font-bold border border-slate-700 uppercase text-yellow-500 font-black">🇻🇪 Venezuela</button>
+                <button onclick="fetchNews('Táchira')" class="bg-slate-800 hover:bg-slate-700 p-3 rounded-lg text-[10px] font-bold border border-slate-700 uppercase text-blue-400 font-black font-black">🏟️ Táchira</button>
+                <button onclick="fetchNews('Sucesos (ultimasnoticias.com.ve OR 2001online.com)')" class="bg-red-900/40 hover:bg-red-900/60 p-3 rounded-lg text-[10px] font-bold border border-red-900 text-red-400 uppercase font-black">🚨 Sucesos</button>
             </div>
         </div>
 
-        <div id="results" class="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div class="col-span-full text-center py-20">
-                <p class="text-slate-500 italic">Esperando selección de pauta para hoy...</p>
-            </div>
+        <div id="results" class="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
+            <div class="col-span-full text-center py-20 text-slate-500 italic uppercase tracking-widest">Listo para la pauta informativa...</div>
         </div>
     </div>
 
     <script>
         async function fetchNews(topic) {
             const resultsDiv = document.getElementById('results');
-            if (!topic) return alert("Ingresa un tema");
+            if (!topic) return alert("Escribe un tema");
 
-            resultsDiv.innerHTML = "<div class='col-span-full text-center py-10'><div class='animate-spin inline-block w-8 h-8 border-4 border-red-500 border-t-transparent rounded-full mb-4'></div><p class='text-red-400 font-bold tracking-widest'>RECOPILANDO INFORMACIÓN...</p></div>";
+            resultsDiv.innerHTML = "<div class='col-span-full text-center py-10'><div class='animate-spin inline-block w-8 h-8 border-4 border-red-500 border-t-transparent rounded-full mb-4'></div><p class='text-red-400 font-bold tracking-widest uppercase text-xs'>Sincronizando con Medios Nacionales...</p></div>";
 
             try {
-                // Usando tu Worker de Cloudflare
+                // Tu Worker de Cloudflare
                 const workerUrl = `https://young-snowflake-28b1.lavozdemanaureradio.workers.dev/?q=${encodeURIComponent(topic)}`;
                 
                 const response = await fetch(workerUrl);
                 const data = await response.json();
 
                 if (!data.articles || data.articles.length === 0) {
-                    resultsDiv.innerHTML = "<p class='col-span-full text-center text-yellow-500 bg-yellow-500/10 p-4 rounded-xl'>No hay noticias de última hora para '" + topic + "'.</p>";
+                    resultsDiv.innerHTML = "<p class='col-span-full text-center text-yellow-500 bg-yellow-500/10 p-6 rounded-xl'>No se encontraron reportes recientes en estos medios para: " + topic + "</p>";
                     return;
                 }
 
@@ -60,30 +58,30 @@
 
                 data.articles.slice(0, 12).forEach(article => {
                     const card = document.createElement('div');
-                    card.className = "bg-slate-900 border border-slate-800 p-5 rounded-2xl flex flex-col justify-between hover:border-red-500/40 transition-all group";
+                    card.className = "bg-slate-900 border border-slate-800 p-5 rounded-2xl flex flex-col justify-between hover:border-red-500/50 transition-all shadow-md";
                     
                     const referenceText = `"${article.title.toUpperCase()}" [Fuente: ${article.source.name}]`;
                     
                     card.innerHTML = `
                         <div>
-                            <div class="flex justify-between items-start mb-3">
-                                <span class="text-[9px] bg-red-900/30 text-red-400 px-2 py-1 rounded font-bold uppercase border border-red-900/50">${article.source.name}</span>
-                                <span class="text-[9px] text-slate-600 font-mono italic">${new Date(article.publishedAt).toLocaleDateString()}</span>
+                            <div class="flex justify-between items-center mb-3">
+                                <span class="text-[9px] bg-slate-800 text-red-400 px-2 py-1 rounded border border-red-900/30 font-black uppercase tracking-tighter">${article.source.name}</span>
+                                <span class="text-[8px] text-slate-600 font-mono">${new Date(article.publishedAt).toLocaleDateString()}</span>
                             </div>
-                            <h3 class="font-bold text-lg mb-3 text-white leading-snug group-hover:text-red-400 transition-colors">${article.title}</h3>
+                            <h3 class="font-bold text-base mb-3 text-white leading-tight">${article.title}</h3>
                         </div>
                         
                         <div class="mt-4">
-                            <div class="bg-black/60 p-3 rounded-lg mb-4 border border-slate-800 shadow-inner">
-                                <p class="text-[8px] text-slate-500 font-black uppercase mb-1 tracking-widest">Referencia para Cabina:</p>
-                                <p class="text-[11px] text-slate-300 italic leading-relaxed">"${article.title}" — Fuente: ${article.source.name}</p>
+                            <div class="bg-black/50 p-3 rounded-lg mb-4 border border-slate-800 shadow-inner">
+                                <p class="text-[8px] text-slate-500 font-black uppercase mb-1 tracking-widest text-center border-b border-slate-800 pb-1 mb-2 italic">LECTURA AL AIRE</p>
+                                <p class="text-[11px] text-slate-300 italic leading-relaxed text-center font-serif leading-snug">"${article.title}" — Fuente: ${article.source.name}</p>
                             </div>
                             <div class="flex gap-2">
-                                <button onclick="copyText('${referenceText} - Info: ${article.url}')" 
-                                        class="flex-1 bg-slate-800 hover:bg-red-700 text-white text-[10px] font-black py-3 rounded-xl transition-all uppercase tracking-tight shadow-md active:scale-95">
-                                    Copiar para Pauta
+                                <button onclick="copyText('${referenceText}')" 
+                                        class="flex-1 bg-red-800/80 hover:bg-red-700 text-white text-[10px] font-black py-3 rounded-xl transition-all uppercase tracking-tighter shadow-lg">
+                                    Copiar Titular
                                 </button>
-                                <a href="${article.url}" target="_blank" class="bg-slate-800 p-3 rounded-xl hover:text-red-400 transition-colors border border-slate-700">
+                                <a href="${article.url}" target="_blank" class="bg-slate-800 p-3 rounded-xl hover:text-red-400 transition-colors border border-slate-700 shadow-lg">
                                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path></svg>
                                 </a>
                             </div>
@@ -93,20 +91,20 @@
                 });
 
             } catch (error) {
-                resultsDiv.innerHTML = "<p class='col-span-full text-center text-red-500 font-bold p-4 bg-red-500/10 rounded-xl'>Error de conexión con el satélite Manaure. Revisa el Worker.</p>";
+                resultsDiv.innerHTML = "<p class='col-span-full text-center text-red-500 font-bold p-4 bg-red-500/10 rounded-xl'>Error de señal. Revisa la conexión del Worker.</p>";
             }
         }
 
         function copyText(text) {
             navigator.clipboard.writeText(text);
             const btn = event.currentTarget;
-            const originalText = btn.innerText;
-            btn.innerText = "¡COPIADO!";
-            btn.classList.replace('bg-slate-800', 'bg-green-700');
+            const oldText = btn.innerText;
+            btn.innerText = "¡EN PORTAPAPELES!";
+            btn.classList.replace('bg-red-800/80', 'bg-green-700');
             setTimeout(() => {
-                btn.innerText = originalText;
-                btn.classList.replace('bg-green-700', 'bg-slate-800');
-            }, 1500);
+                btn.innerText = oldText;
+                btn.classList.replace('bg-green-700', 'bg-red-800/80');
+            }, 1200);
         }
     </script>
 </body>
