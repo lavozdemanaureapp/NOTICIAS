@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MANAURE 92.3 FM - LA HORA FELIZ (REFRESH 1H)</title>
+    <title>MONITOR MANAURE v15.0 - FUENTES DIRECTAS</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         .noticia-titulo { font-family: 'Arial Black', sans-serif; text-transform: uppercase; line-height: 1.2; }
@@ -12,19 +12,19 @@
         .seccion-card:hover { transform: translateY(-4px); background-color: #111827; }
     </style>
 </head>
-<body class="bg-black text-white min-h-screen p-4 uppercase font-sans">
+<body class="bg-black text-white min-h-screen p-4 uppercase font-sans text-[12px]">
     
     <div class="max-w-7xl mx-auto">
         <header class="mb-10 text-center border-b-4 border-red-700 pb-6 shadow-2xl">
             <h1 class="text-6xl font-black italic tracking-tighter">RADIO MANAURE</h1>
             <div class="flex justify-center items-center gap-4 mt-2">
-                <p class="text-red-600 font-bold tracking-[0.5em]">LA HORA FELIZ - 92.3 FM</p>
-                <span id="reloj-viva" class="bg-slate-900 px-3 py-1 rounded-full text-green-500 font-mono text-[10px] border border-green-900">SINCRONIZADO</span>
+                <p class="text-red-600 font-bold tracking-[0.5em] italic">92.3 FM - MONITOR DEPORTIVO ESPECIALIZADO</p>
+                <span id="reloj-viva" class="bg-slate-900 px-3 py-1 rounded-full text-green-500 font-mono text-[10px] border border-green-900">ACTUALIZADO</span>
             </div>
         </header>
 
         <div id="status" class="text-center py-10 animate-pulse font-black text-yellow-500 italic uppercase">
-            Preparando pauta informativa para la próxima hora...
+            CONECTANDO CON LÍDER, MERIDIANO Y DEPORTIVO TÁCHIRA...
         </div>
 
         <div id="contenedor-principal" class="hidden space-y-12 pb-20">
@@ -46,19 +46,22 @@
         const filtroNegativo = "-crisis -protestas -conflictos -oposicion -escasez -inflacion";
         
         const config = {
-            futbol: { t: "⚽ FÚTBOL", c: "text-green-400", b: "border-green-500", q: "Fútbol (site:liderendeportes.com OR site:meridiano.net OR site:lanacionweb.com)" },
-            beisbol: { t: "⚾ BÉISBOL", c: "text-blue-300", b: "border-blue-400", q: "Béisbol (site:liderendeportes.com OR site:meridiano.net)" },
-            baloncesto: { t: "🏀 BALONCESTO", c: "text-orange-500", b: "border-orange-600", q: "Baloncesto OR NBA (site:liderendeportes.com OR site:meridiano.net)" },
-            "otros-deportes": { t: "🚴 CICLISMO / MOTOR", c: "text-purple-400", b: "border-purple-500", q: "Ciclismo OR F1 (site:lanacionweb.com OR site:meridiano.net)" },
+            // DEPORTES CON TUS LINKS ESPECÍFICOS
+            futbol: { t: "⚽ FÚTBOL (DT / LÍDER / MERIDIANO)", c: "text-green-400", b: "border-green-500", q: "site:deportivotachira.com OR site:liderendeportes.com/seccion/futbol/ OR site:meridiano.net/futbol OR site:lanacionweb.com/deportes/" },
+            beisbol: { t: "⚾ BÉISBOL (LÍDER / MERIDIANO)", c: "text-blue-300", b: "border-blue-400", q: "site:liderendeportes.com/seccion/baseball/ OR site:meridiano.net/beisbol" },
+            baloncesto: { t: "🏀 BALONCESTO (LÍDER / MERIDIANO)", c: "text-orange-500", b: "border-orange-600", q: "site:liderendeportes.com/seccion/basketball/ OR site:meridiano.net/baloncesto" },
+            "otros-deportes": { t: "🚴 MÁS DEPORTES / CICLISMO", c: "text-purple-400", b: "border-purple-500", q: "site:liderendeportes.com/seccion/mas-deportes/ OR site:lanacionweb.com/deportes/" },
+            
+            // GENERALES (SIGUEN IGUAL)
             venezuela: { t: "🇻🇪 NACIONALES", c: "text-yellow-500", b: "border-yellow-600", q: `Venezuela (site:ultimasnoticias.com.ve OR site:vtv.gob.ve) ${filtroNegativo}` },
-            tachira: { t: "🏟️ TÁCHIRA", c: "text-blue-500", b: "border-blue-600", q: `Táchira (site:lanacionweb.com OR site:laprensatachira.com) -deporte -futbol ${filtroNegativo}` },
+            tachira: { t: "🏟️ TÁCHIRA (COMUNIDAD)", c: "text-blue-500", b: "border-blue-600", q: `Táchira (site:lanacionweb.com OR site:laprensatachira.com) -deporte ${filtroNegativo}` },
             mundo: { t: "🌍 MUNDO", c: "text-blue-600", b: "border-blue-700", q: `Mundo site:ultimasnoticias.com.ve OR site:2001online.com ${filtroNegativo}` },
             sucesos: { t: "🚨 SUCESOS", c: "text-red-600", b: "border-red-700", q: "Sucesos (site:laprensatachira.com OR site:lanacionweb.com)" }
         };
 
         async function cargarTodo() {
             const statusRef = document.getElementById('reloj-viva');
-            statusRef.innerText = "ACTUALIZANDO...";
+            statusRef.innerText = "BUSCANDO...";
 
             for (const id in config) {
                 const query = encodeURIComponent(config[id].q);
@@ -92,7 +95,7 @@
                                 </div>
                                 <div class="grid grid-cols-2 gap-2">
                                     <button onclick="copiar('${titulo} [${fuente}]')" class="bg-slate-800 hover:bg-white hover:text-black py-4 rounded-2xl text-[10px] font-black transition-all border border-slate-700">COPIAR</button>
-                                    <a href="${item.link}" target="_blank" class="bg-slate-700/30 text-slate-300 hover:bg-slate-200 hover:text-black py-4 rounded-2xl text-[10px] font-black text-center transition-all border border-slate-700 flex items-center justify-center uppercase">Abrir</a>
+                                    <a href="${item.link}" target="_blank" class="bg-slate-700/30 text-slate-300 hover:bg-slate-200 hover:text-black py-4 rounded-2xl text-[10px] font-black text-center transition-all border border-slate-700 flex items-center justify-center">ABRIR</a>
                                 </div>
                             </div>
                         `;
@@ -105,18 +108,16 @@
             }
             document.getElementById('status').classList.add('hidden');
             document.getElementById('contenedor-principal').classList.remove('hidden');
-            statusRef.innerText = "REFRESCO: " + new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
+            statusRef.innerText = "HORA: " + new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
         }
 
         function copiar(texto) {
             navigator.clipboard.writeText(texto);
-            alert("TITULAR COPIADO");
+            alert("TITULAR LISTO");
         }
 
         window.onload = cargarTodo;
-
-        // ACTUALIZACIÓN AUTOMÁTICA CADA 60 MINUTOS (3,600,000 ms)
-        setInterval(cargarTodo, 3600000);
+        setInterval(cargarTodo, 3600000); // Actualiza cada hora
     </script>
 </body>
 </html>
