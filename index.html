@@ -3,80 +3,83 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MANAURE 92.3 FM - NOTICIAS EN VIVO</title>
+    <title>MANAURE 92.3 FM - NOTICIAS</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        .noticia-card { border-left: 5px solid #dc2626; transition: all 0.3s; }
+        .noticia-card:hover { transform: translateX(10px); background-color: #1e293b; }
+    </style>
 </head>
 <body class="bg-black text-slate-100 min-h-screen p-4 font-sans uppercase">
     <div class="max-w-4xl mx-auto">
         <header class="mb-10 text-center border-b-4 border-red-700 pb-6 shadow-2xl">
             <h1 class="text-6xl font-black italic tracking-tighter">RADIO MANAURE</h1>
-            <p class="text-red-600 font-bold text-xs tracking-[0.5em] mt-2 italic text-shadow">Resumen de Noticias en Tiempo Real</p>
+            <p class="text-red-600 font-bold text-xs tracking-[0.5em] mt-2">Resumen Informativo Automático</p>
         </header>
 
-        <div id="noticias-blog" class="grid grid-cols-1 gap-6">
-            <div class="text-center py-20 animate-pulse font-black text-yellow-500 text-xl italic tracking-widest">
-                Sincronizando con satélites informativos...
+        <div id="contenedor-noticias" class="space-y-4 text-center">
+            <div class="py-20 animate-pulse font-black text-yellow-500 text-xl italic tracking-widest">
+                Sincronizando pauta de hoy...
             </div>
         </div>
 
         <footer class="mt-12 text-center text-slate-800 text-[10px] font-black border-t border-slate-900 pt-6 mb-10">
-            LA VOZ DE MANAURE 92.3 FM - 2026
+            LA VOZ DE MANAURE 92.3 FM - SANTA ANA DEL TÁCHIRA
         </footer>
     </div>
 
     <script>
-        // Función que arranca sola al abrir la página
+        // Esta función arranca sola
         window.onload = async function() {
-            const container = document.getElementById('noticias-blog');
+            const container = document.getElementById('contenedor-noticias');
             
-            // Buscamos todo lo importante de Venezuela y el Táchira en un solo viaje
-            const query = encodeURIComponent("Táchira OR Venezuela OR Deportes OR Sucesos site:lanacionweb.com OR site:ultimasnoticias.com.ve OR site:2001online.com OR site:laprensatachira.com OR site:meridiano.net OR site:liderendeportes.com");
-            const url = `https://api.allorigins.win/get?url=${encodeURIComponent(`https://news.google.com/rss/search?q=${query}&hl=es-419&gl=VE&ceid=VE:es-419`)}`;
+            // Unimos todas las secciones en una sola búsqueda potente
+            const query = encodeURIComponent("(Táchira OR Venezuela OR Deportes OR Sucesos) (site:lanacionweb.com OR site:ultimasnoticias.com.ve OR site:2001online.com OR site:laprensatachira.com OR site:liderendeportes.com OR site:meridiano.net)");
+            
+            // Usamos un puente más estable (Google News RSS)
+            const rssUrl = `https://news.google.com/rss/search?q=${query}&hl=es-419&gl=VE&ceid=VE:es-419`;
 
             try {
-                const response = await fetch(url);
+                // Buscamos los datos usando un puente directo de RSS
+                const response = await fetch(`https://api.rss2json.com/v1/api.json?rss_url=${encodeURIComponent(rssUrl)}`);
                 const data = await response.json();
-                const parser = new DOMParser();
-                const xml = parser.parseFromString(data.contents, "text/xml");
-                const items = Array.from(xml.querySelectorAll("item"));
+
+                if (data.status !== 'ok') throw new Error();
 
                 container.innerHTML = "";
+                container.className = "grid grid-cols-1 gap-4 text-left";
 
-                items.forEach((item, index) => {
-                    if (index > 25) return; // Mostramos las 25 más frescas
+                data.items.forEach((item, index) => {
+                    if (index > 25) return; // Top 25 noticias
 
-                    const titulo = item.querySelector("title").textContent.split(" - ")[0];
-                    const link = item.querySelector("link").textContent;
-                    const fuente = item.querySelector("source")?.textContent || "Prensa";
-                    const fecha = new Date(item.querySelector("pubDate").textContent).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
+                    const titulo = item.title.split(" - ")[0].toUpperCase();
+                    const fuente = item.author || "PRENSA";
+                    const fecha = new Date(item.pubDate).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
 
                     const card = document.createElement('div');
-                    card.className = "bg-slate-900 rounded-3xl border border-slate-800 p-6 flex flex-col md:flex-row justify-between items-center hover:border-red-600 transition-all shadow-xl border-l-8 border-l-red-600 gap-4";
+                    card.className = "noticia-card bg-slate-900 p-5 rounded-2xl flex flex-col md:flex-row justify-between items-center gap-4 shadow-lg";
                     
                     card.innerHTML = `
                         <div class="flex-1">
                             <div class="flex items-center gap-3 mb-2">
-                                <span class="bg-red-700 text-white text-[9px] font-black px-2 py-0.5 rounded shadow-sm italic uppercase">${fuente}</span>
-                                <span class="text-slate-500 font-bold text-[10px] italic underline decoration-red-900">${fecha}</span>
+                                <span class="bg-red-700 text-white text-[9px] font-black px-2 py-1 rounded italic">${fuente}</span>
+                                <span class="text-slate-500 font-bold text-[10px] italic underline">${fecha}</span>
                             </div>
-                            <h3 class="text-lg font-bold text-white leading-tight italic uppercase font-serif tracking-tight">${titulo}</h3>
+                            <h3 class="text-base font-bold text-white leading-tight italic font-serif">${titulo}</h3>
                         </div>
-                        <div class="flex gap-2 w-full md:w-auto">
-                            <button onclick="copiar('${titulo.replace(/'/g, "").toUpperCase()}')" class="flex-1 md:w-32 bg-slate-800 hover:bg-white hover:text-black py-4 rounded-2xl text-[10px] font-black uppercase transition-all shadow-md active:scale-95 border border-slate-700">Copiar</button>
-                            <a href="${link}" target="_blank" class="flex-1 md:w-32 bg-red-900/20 text-center hover:bg-red-800 py-4 rounded-2xl text-[9px] font-black uppercase text-red-500 hover:text-white transition-all flex items-center justify-center border border-red-900/30">Leer Nota</a>
-                        </div>
+                        <button onclick="copiar('${titulo}')" class="w-full md:w-28 bg-slate-800 hover:bg-white hover:text-black py-4 rounded-xl text-[10px] font-black uppercase transition-all border border-slate-700">COPIAR</button>
                     `;
                     container.appendChild(card);
                 });
 
             } catch (e) {
-                container.innerHTML = "<p class='text-center text-red-600 font-black p-10 uppercase italic'>Error de conexión. Refresca para intentar de nuevo.</p>";
+                container.innerHTML = "<p class='text-red-600 font-black p-10 uppercase italic'>Error de señal. Por favor refresca la página (F5).</p>";
             }
         };
 
         function copiar(texto) {
             navigator.clipboard.writeText(texto);
-            alert("TITULAR LISTO PARA EL MICRO");
+            alert("COPIADO");
         }
     </script>
 </body>
