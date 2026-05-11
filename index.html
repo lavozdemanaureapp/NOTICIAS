@@ -3,96 +3,84 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>News Hunter - La Voz de Manaure</title>
+    <title>Titulares - La Voz de Manaure</title>
     <script src="https://cdn.tailwindcss.com"></script>
 </head>
 <body class="bg-slate-900 text-white min-h-screen p-5">
     <div class="max-w-3xl mx-auto">
-        <header class="mb-8 text-center">
-            <h1 class="text-3xl font-bold text-blue-400">Buscador de Titulares</h1>
-            <p class="text-slate-400">Generador de referencias para Radio</p>
+        <header class="mb-8 text-center border-b border-slate-700 pb-4">
+            <h1 class="text-3xl font-bold text-blue-400 italic">RADIO MANAURE</h1>
+            <p class="text-slate-400 text-sm uppercase tracking-widest">Buscador de Noticias con Referencias</p>
         </header>
 
         <div class="flex gap-2 mb-8">
-            <input type="text" id="topic" placeholder="Ej: Táchira, Béisbol, Ciclismo..." 
+            <input type="text" id="topic" placeholder="Ej: Deportivo Táchira, Ciclismo, Venezuela..." 
                    class="flex-1 p-3 rounded-lg bg-slate-800 border border-slate-700 text-white focus:outline-none focus:ring-2 focus:ring-blue-500">
-            <button onclick="fetchNews()" class="bg-blue-600 px-6 py-3 rounded-lg font-bold hover:bg-blue-700 transition">
-                Buscar
+            <button onclick="fetchNews()" class="bg-blue-600 px-6 py-3 rounded-lg font-bold hover:bg-blue-700 transition shadow-lg">
+                BUSCAR
             </button>
         </div>
 
         <div id="results" class="space-y-4">
-            <p class="text-center text-slate-500">Escribe un tema para buscar las noticias del día...</p>
+            <p class="text-center text-slate-500">Ingresa un tema para obtener los titulares de hoy.</p>
         </div>
     </div>
 
     <script>
-        // Tu API KEY ya integrada
-        const API_KEY = '9be5c54a341a47b08417379635189a25'; 
-
         async function fetchNews() {
             const topic = document.getElementById('topic').value;
             const resultsDiv = document.getElementById('results');
             
-            if (!topic) return alert("Por favor, escribe un tema de búsqueda");
+            if (!topic) return alert("Por favor, escribe un tema");
 
-            resultsDiv.innerHTML = "<p class='text-center animate-pulse'>Buscando en los principales diarios...</p>";
+            resultsDiv.innerHTML = "<p class='text-center animate-pulse'>Consultando fuentes de noticias...</p>";
 
             try {
-                // Buscamos noticias globales en español relacionadas con el tema
-                const url = `https://newsapi.org/v2/everything?q=${encodeURIComponent(topic)}&language=es&sortBy=publishedAt&apiKey=${API_KEY}`;
+                // USANDO TU WORKER COMO PUENTE PARA EVITAR BLOQUEOS
+                const workerUrl = `https://young-snowflake-28b1.lavozdemanaureradio.workers.dev/?q=${encodeURIComponent(topic)}`;
                 
-                const response = await fetch(url);
+                const response = await fetch(workerUrl);
                 const data = await response.json();
 
-                if (data.status === "error") {
-                    throw new Error(data.message);
-                }
-
                 if (!data.articles || data.articles.length === 0) {
-                    resultsDiv.innerHTML = "<p class='text-center text-yellow-500'>No encontré noticias recientes sobre ese tema. Intenta con una palabra más general.</p>";
+                    resultsDiv.innerHTML = "<p class='text-center text-yellow-500'>No se encontraron noticias recientes sobre este tema.</p>";
                     return;
                 }
 
-                resultsDiv.innerHTML = ""; // Limpiar carga
+                resultsDiv.innerHTML = ""; 
 
-                data.articles.slice(0, 8).forEach(article => {
+                data.articles.slice(0, 10).forEach(article => {
                     const card = document.createElement('div');
-                    card.className = "bg-slate-800 p-5 rounded-xl border-l-4 border-blue-500 shadow-lg mb-4";
+                    card.className = "bg-slate-800 p-5 rounded-xl border-l-4 border-blue-600 shadow-md mb-4 hover:bg-slate-750 transition";
                     
-                    // Formato de referencia profesional para radio
-                    const cleanTitle = article.title.replace(/"/g, ''); // Limpiar comillas existentes
-                    const referenceText = `"${cleanTitle.toUpperCase()}" [Fuente: ${article.source.name}]`;
+                    const referenceText = `"${article.title.toUpperCase()}" [Fuente: ${article.source.name}]`;
                     
                     card.innerHTML = `
-                        <h3 class="font-bold text-lg mb-2 text-white">${article.title}</h3>
-                        <p class="text-sm text-slate-400 mb-3">${article.description || 'Sin descripción disponible.'}</p>
-                        <div class="flex flex-col gap-2">
-                            <div class="bg-black p-3 rounded border border-slate-700">
-                                <p class="text-xs text-blue-300 font-mono break-words">${referenceText}</p>
-                            </div>
-                            <div class="flex justify-between items-center mt-2">
-                                <a href="${article.url}" target="_blank" class="text-blue-400 text-xs hover:underline italic">Ver nota completa</a>
-                                <button onclick="copyText('${referenceText} - Link: ${article.url}')" 
-                                        class="text-xs bg-blue-600 px-4 py-2 rounded font-bold hover:bg-blue-500 transition">
-                                    COPIAR PARA RADIO
-                                </button>
-                            </div>
+                        <h3 class="font-bold text-lg mb-2 text-white leading-tight">${article.title}</h3>
+                        <p class="text-sm text-slate-400 mb-4">${article.description || ''}</p>
+                        <div class="bg-black/50 p-3 rounded mb-3">
+                            <p class="text-[10px] text-blue-300 font-mono uppercase tracking-tighter mb-1">Copia para la Radio:</p>
+                            <p class="text-xs text-white italic break-words">${referenceText}</p>
+                        </div>
+                        <div class="flex justify-between items-center">
+                            <a href="${article.url}" target="_blank" class="text-blue-400 text-xs hover:underline uppercase font-semibold">Ver nota completa</a>
+                            <button onclick="copyText('${referenceText} - Link: ${article.url}')" 
+                                    class="text-[10px] bg-blue-700 px-3 py-1.5 rounded text-white font-bold hover:bg-blue-500 uppercase tracking-widest">
+                                Copiar
+                            </button>
                         </div>
                     `;
                     resultsDiv.appendChild(card);
                 });
 
             } catch (error) {
-                console.error(error);
-                resultsDiv.innerHTML = `<p class='text-red-400 text-center'>Error: ${error.message}. Verifica que la API Key esté activa.</p>`;
+                resultsDiv.innerHTML = "<p class='text-red-400 text-center text-sm'>Error al conectar con el servidor de Cloudflare.</p>";
             }
         }
 
         function copyText(text) {
-            navigator.clipboard.writeText(text).then(() => {
-                alert("Referencia copiada con éxito");
-            });
+            navigator.clipboard.writeText(text);
+            alert("Referencia lista para usar");
         }
     </script>
 </body>
