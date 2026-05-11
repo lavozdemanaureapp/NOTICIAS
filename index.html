@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MONITOR MANAURE v12.0 - PAUTA INTEGRAL</title>
+    <title>MONITOR MANAURE v13.0 - ESPECIAL DEPORTES</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         .noticia-titulo { font-family: 'Arial Black', sans-serif; text-transform: uppercase; line-height: 1.2; }
@@ -14,34 +14,45 @@
 </head>
 <body class="bg-black text-white min-h-screen p-4 uppercase font-sans">
     
-    <div class="max-w-6xl mx-auto">
+    <div class="max-w-7xl mx-auto">
         <header class="mb-10 text-center border-b-4 border-red-700 pb-6 shadow-2xl">
             <h1 class="text-6xl font-black italic tracking-tighter">RADIO MANAURE</h1>
-            <p class="text-red-600 font-bold text-xs tracking-[0.5em] mt-2 italic">Monitor Informativo 92.3 FM - Versión Profesional</p>
+            <p class="text-red-600 font-bold text-xs tracking-[0.5em] mt-2 italic font-sans">Monitor Deportivo e Informativo 92.3 FM</p>
         </header>
 
         <div id="status" class="text-center py-10 animate-pulse font-black text-yellow-500 italic tracking-widest">
-            SINCROIZANDO PRENSA NACIONAL Y REGIONAL...
+            SINCROIZANDO RESULTADOS DEPORTIVOS Y PRENSA...
         </div>
 
         <div id="contenedor-principal" class="hidden space-y-12 pb-20">
+            <div id="futbol"></div>
+            <div id="beisbol"></div>
+            <div id="baloncesto"></div>
+            <div id="otros-deportes"></div>
+            
+            <hr class="border-slate-800 my-10">
+            
             <div id="venezuela"></div>
             <div id="tachira"></div>
-            <div id="deportes"></div>
             <div id="mundo"></div>
             <div id="sucesos"></div>
         </div>
     </div>
 
     <script>
-        // Filtros de contenido institucional
         const filtroNegativo = "-crisis -protestas -conflictos -oposicion -escasez -inflacion";
         
         const config = {
-            venezuela: { t: "🇻🇪 NACIONALES", c: "text-yellow-500", b: "border-yellow-600", q: `Venezuela (site:ultimasnoticias.com.ve OR site:vtv.gob.ve OR site:radiomundial.com.ve) ${filtroNegativo}` },
-            tachira: { t: "🏟️ REGIONALES (TÁCHIRA)", c: "text-blue-400", b: "border-blue-500", q: `Táchira (site:lanacionweb.com OR site:laprensatachira.com) -deporte -fútbol ${filtroNegativo}` },
-            deportes: { t: "⚽ DEPORTES", c: "text-green-500", b: "border-green-600", q: "Deportes site:liderendeportes.com OR site:meridiano.net" },
-            mundo: { t: "🌍 INTERNACIONALES", c: "text-blue-600", b: "border-blue-700", q: `Mundo site:ultimasnoticias.com.ve OR site:2001online.com ${filtroNegativo}` },
+            // DESGLOSE DEPORTIVO
+            futbol: { t: "⚽ FÚTBOL (LIGAFUTVE / INTERNACIONAL)", c: "text-green-400", b: "border-green-500", q: "Fútbol (site:liderendeportes.com OR site:meridiano.net OR site:lanacionweb.com)" },
+            beisbol: { t: "⚾ BÉISBOL (MLB / LVBP)", c: "text-blue-300", b: "border-blue-400", q: "Béisbol (site:liderendeportes.com OR site:meridiano.net OR site:septimaentrada.com)" },
+            baloncesto: { t: "🏀 BALONCESTO (NBA / SPB)", c: "text-orange-500", b: "border-orange-600", q: "Baloncesto OR NBA OR SPB (site:liderendeportes.com OR site:meridiano.net)" },
+            "otros-deportes": { t: "🚴 OTROS (CICLISMO / BOXEO / F1)", c: "text-purple-400", b: "border-purple-500", q: "Ciclismo OR F1 OR Boxeo (site:lanacionweb.com OR site:meridiano.net)" },
+            
+            // GENERALES
+            venezuela: { t: "🇻🇪 NACIONALES", c: "text-yellow-500", b: "border-yellow-600", q: `Venezuela (site:ultimasnoticias.com.ve OR site:vtv.gob.ve) ${filtroNegativo}` },
+            tachira: { t: "🏟️ TÁCHIRA (COMUNIDAD)", c: "text-blue-500", b: "border-blue-600", q: `Táchira (site:lanacionweb.com OR site:laprensatachira.com) -deporte -futbol ${filtroNegativo}` },
+            mundo: { t: "🌍 MUNDO", c: "text-blue-600", b: "border-blue-700", q: `Mundo site:ultimasnoticias.com.ve OR site:2001online.com ${filtroNegativo}` },
             sucesos: { t: "🚨 SUCESOS", c: "text-red-600", b: "border-red-700", q: "Sucesos (site:laprensatachira.com OR site:lanacionweb.com)" }
         };
 
@@ -61,25 +72,24 @@
                         const fuente = item.author || "PRENSA";
                         const titulo = item.title.replace(/ - .*/, "").toUpperCase();
                         const fecha = new Date(item.pubDate).toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'});
-                        const link = item.link; // Link directo a la fuente
                         
                         let tmp = document.createElement("DIV");
                         tmp.innerHTML = item.description;
                         let resumen = tmp.innerText.replace(/&nbsp;/g, ' ').substring(0, 180) + "...";
 
                         html += `
-                            <div class="bg-slate-900 p-6 rounded-3xl seccion-card ${config[id].b} shadow-2xl flex flex-col justify-between">
+                            <div class="bg-slate-900 p-6 rounded-3xl seccion-card ${config[id].b} shadow-2xl flex flex-col justify-between border-t border-r border-slate-800">
                                 <div>
                                     <div class="flex justify-between text-[10px] font-black mb-4 tracking-widest">
                                         <span class="${config[id].c}">${fuente}</span>
                                         <span class="text-slate-500 italic">${fecha}</span>
                                     </div>
-                                    <h3 class="noticia-titulo text-base mb-3 text-white">${titulo}</h3>
+                                    <h3 class="noticia-titulo text-base mb-3 text-white tracking-tight">${titulo}</h3>
                                     <p class="noticia-resumen text-[11px] leading-relaxed mb-6">${resumen}</p>
                                 </div>
                                 <div class="grid grid-cols-2 gap-2">
                                     <button onclick="copiar('${titulo} [${fuente}]')" class="bg-slate-800 hover:bg-white hover:text-black py-4 rounded-2xl text-[10px] font-black transition-all border border-slate-700">COPIAR</button>
-                                    <a href="${link}" target="_blank" class="bg-red-900/20 text-red-500 hover:bg-red-700 hover:text-white py-4 rounded-2xl text-[10px] font-black text-center transition-all border border-red-900 flex items-center justify-center">ABRIR NOTA</a>
+                                    <a href="${item.link}" target="_blank" class="bg-slate-700/30 text-slate-300 hover:bg-slate-200 hover:text-black py-4 rounded-2xl text-[10px] font-black text-center transition-all border border-slate-700 flex items-center justify-center">ABRIR NOTA</a>
                                 </div>
                             </div>
                         `;
@@ -89,7 +99,7 @@
                     document.getElementById(id).innerHTML = html;
                     await new Promise(r => setTimeout(r, 400)); 
                 } catch (e) {
-                    document.getElementById(id).innerHTML = `<p class="text-red-900 text-xs italic">Sección ${id} temporalmente fuera de línea.</p>`;
+                    document.getElementById(id).innerHTML = `<p class="text-red-900 text-xs italic">Cargando datos de ${id}...</p>`;
                 }
             }
             document.getElementById('status').classList.add('hidden');
